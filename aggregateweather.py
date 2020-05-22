@@ -104,11 +104,10 @@ for i in dates:
     RH_min = 9999
     sum_temp = 0
     sum_rel_hum = 0
-    sum_windspeed = 0
     counter = 0
     for j in day:
         counter += 1
-        # +----------------+---------------+------+-----+---------+----------------+
+        #+----------------+---------------+------+-----+---------+----------------+
         #| Field          | Type          | Null | Key | Default | Extra          |
         #+----------------+---------------+------+-----+---------+----------------+
         #| observation_id | int           | NO   | PRI | NULL    | auto_increment |
@@ -118,20 +117,22 @@ for i in dates:
         #| rel_hum        | decimal(10,0) | YES  |     | NULL    |                |
         #| temp           | float         | YES  |     | NULL    |                |
         #| windspeed      | float         | YES  |     | NULL    |                |
+        #| station        | int           | YES  |     | NULL    |                |
         #| winddir        | int           | YES  |     | NULL    |                |
         #+----------------+---------------+------+-----+---------+----------------+
+
         observation_id = 0
         date = 1
         time = 2
         rainfall = 3
         rel_hum = 4
         temp = 5
-        windspeed = 6
-        winddir = 7
+        #windspeed = 6
+        #station = 7
+        #winddir = 8
         sum_rain += j[rainfall]
         sum_temp += j[temp]
         sum_rel_hum += j[rel_hum]
-        sum_windspeed += j[windspeed]
         if T_max < j[temp]:
             T_max = j[temp]
         if T_min > j[temp]:
