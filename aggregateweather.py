@@ -10,9 +10,15 @@ import pandas as pd
 import requests
 import sys
 
+
 def usage():
-    print(  "Usage: " + __file__ + "[--config path_to_file.ini] [--station smhi_station_number ] --db database] [--host dbhost] [--user dbuser] [--password dbpassword]\n"
-            "Default configfile is weather.ini, any parameter can be overwritten on the command line")
+    print(
+        "Usage: " + __file__ +
+        "[--config path_to_file.ini] [--station smhi_station_number ] --db database] [--host dbhost] [--user dbuser] [--password dbpassword]\n"
+        "Default configfile is weather.ini, any parameter can be overwritten on the command line"
+    )
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--config')
 parser.add_argument('--db')
@@ -32,7 +38,6 @@ user = config['MySQL']['user']
 password = config['MySQL']['password']
 
 station = config['SMHI']['station']
-
 
 # Defaults
 z_msl = 48.854
@@ -61,7 +66,10 @@ if not (db and host and user and password):
     sys.exit(1)
 
 pd.options.mode.chained_assignment = None
-station_data = requests.get(url='https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station/{}.json'.format(station)).json()
+station_data = requests.get(
+    url=
+    'https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/1/station/{}.json'
+    .format(station)).json()
 newest_to = 0
 for i in station_data['position']:
     if i['to'] > newest_to:
@@ -69,36 +77,28 @@ for i in station_data['position']:
         lat = i['latitude']
         lon = i['longitude']
         TZ_lon = lon
-    
 
-mydb = mysql.connector.connect(
-  auth_plugin='mysql_native_password',
-  database=db,
-  host=host,
-  passwd=password,
-  user=user
-)
+mydb = mysql.connector.connect(auth_plugin='mysql_native_password',
+                               database=db,
+                               host=host,
+                               passwd=password,
+                               user=user)
 
-cursor = mydb.cursor();
+cursor = mydb.cursor()
 
-date_select = (
-    "SELECT DISTINCT `date` "
-    "FROM weather "
-)
+date_select = ("SELECT DISTINCT `date` " "FROM weather ")
 
 cursor.execute(date_select)
 dates = cursor.fetchall()
 csv = "date,T_max,T_min,T_mean,RH_max,RH_min,RH_mean,Rainfall\n"
 for i in dates:
     working_date = i[0].strftime('%Y-%m-%d')
-    day_select = (
-        'SELECT * FROM weather '
-        'WHERE date = "{}"'.format(working_date)
-    )
+    day_select = ('SELECT * FROM weather '
+                  'WHERE date = "{}"'.format(working_date))
     cursor.execute(day_select)
     day = cursor.fetchall()
     sum_rain = 0
-    T_max = -9999 
+    T_max = -9999
     T_min = 9999
     RH_max = -9999
     RH_min = 9999
@@ -132,19 +132,24 @@ for i in dates:
         sum_temp += j[temp]
         sum_rel_hum += j[rel_hum]
         sum_windspeed += j[windspeed]
-        if T_max <  j[temp]:
+        if T_max < j[temp]:
             T_max = j[temp]
-        if T_min >  j[temp]:
+        if T_min > j[temp]:
             T_min = j[temp]
-        if RH_max <  j[rel_hum]:
+        if RH_max < j[rel_hum]:
             RH_max = j[rel_hum]
-        if RH_min >  j[rel_hum]:
+        if RH_min > j[rel_hum]:
             RH_min = j[rel_hum]
     T_mean = sum_temp / counter
     RH_mean = sum_rel_hum / counter
-    csv += working_date + "," + str(T_max) + "," + str(T_min) + "," + str(T_mean) + "," + str(RH_max) + "," + str(RH_min) +"," + str(RH_mean) + "," + str(sum_rain) + "\n"
+    csv += working_date + "," + str(T_max) + "," + str(T_min) + "," + str(
+        T_mean) + "," + str(RH_max) + "," + str(RH_min) + "," + str(
+            RH_mean) + "," + str(sum_rain) + "\n"
 DATA = StringIO(csv)
-tsdata =  pd.read_csv(DATA, parse_dates=True, infer_datetime_format=True, index_col='date')
+tsdata = pd.read_csv(DATA,
+                     parse_dates=True,
+                     infer_datetime_format=True,
+                     index_col='date')
 et1 = ETo()
 et1.param_est(tsdata, freq, z_msl, lat, lon, TZ_lon)
 et1.ts_param.head()
@@ -153,20 +158,18 @@ eto1 = et1.eto_hargreaves()
 upsert = (
     "REPLACE INTO aggregated_weather "
     "(Date, T_max, T_min, T_mean, RH_max, RH_min, RH_mean, Rainfall, ETo, station) "
-    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-)
-
-
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 for key, value in eto1.items():
     aggdate = key.strftime('%Y-%m-%d')
-    data = (
-    aggdate,float(tsdata.loc[aggdate, 'T_max']),float(tsdata.loc[aggdate, 'T_min']),float(tsdata.loc[aggdate, 'T_mean']),float(tsdata.loc[aggdate, 'RH_max']),float(tsdata.loc[aggdate, 'RH_min']),float(tsdata.loc[aggdate, 'RH_mean']),float(tsdata.loc[aggdate, 'Rainfall']),float(value),int(station)
-    )
+    data = (aggdate, float(tsdata.loc[aggdate, 'T_max']),
+            float(tsdata.loc[aggdate,
+                             'T_min']), float(tsdata.loc[aggdate, 'T_mean']),
+            float(tsdata.loc[aggdate,
+                             'RH_max']), float(tsdata.loc[aggdate, 'RH_min']),
+            float(tsdata.loc[aggdate, 'RH_mean']),
+            float(tsdata.loc[aggdate, 'Rainfall']), float(value), int(station))
     cursor.execute(upsert, data)
-
-
 
 mydb.commit()
 mydb.close()
-
