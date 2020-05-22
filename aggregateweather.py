@@ -14,14 +14,14 @@ import sys
 def usage():
     print(
         "Usage: " + __file__ +
-        "[--config path_to_file.ini] [--station smhi_station_number ] --db database] [--host dbhost] [--user dbuser] [--password dbpassword]\n"
+        "[--config path_to_file.ini] [--station smhi_station_number ] --database database] [--host dbhost] [--user dbuser] [--password dbpassword]\n"
         "Default configfile is weather.ini, any parameter can be overwritten on the command line"
     )
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--config')
-parser.add_argument('--db')
+parser.add_argument('--database')
 parser.add_argument('--host')
 parser.add_argument('--user')
 parser.add_argument('--password')
@@ -32,7 +32,7 @@ if args.config:
     config_file = args.config
 config = configparser.ConfigParser()
 config.read(config_file)
-db = config['MySQL']['db']
+db = config['MySQL']['database']
 host = config['MySQL']['host']
 user = config['MySQL']['user']
 password = config['MySQL']['password']
@@ -50,8 +50,8 @@ if args.station:
     station = args.station
 if not station:
     station = "97100"
-if args.db:
-    db = args.db
+if args.database:
+    db = args.database
 if args.host:
     host = args.host
 if not host:
@@ -94,7 +94,7 @@ csv = "date,T_max,T_min,T_mean,RH_max,RH_min,RH_mean,Rainfall\n"
 for i in dates:
     working_date = i[0].strftime('%Y-%m-%d')
     day_select = ('SELECT * FROM weather '
-                  'WHERE date = "{}"'.format(working_date))
+                  'WHERE date = "{}" AND station = {}'.format(working_date,station))
     cursor.execute(day_select)
     day = cursor.fetchall()
     sum_rain = 0

@@ -11,7 +11,7 @@ import sys
 def usage():
     print(
         "Usage: " + __file__ +
-        "[--config path_to_file.ini] [--station smhi_station_number] [--period latest-hour|latest-day|latest-months] [--db database] [--host dbhost] [--user dbuser] [--password dbpassword]\n"
+        "[--config path_to_file.ini] [--station smhi_station_number] [--period latest-hour|latest-day|latest-months] [--database database] [--host dbhost] [--user dbuser] [--password dbpassword]\n"
         "Default configfile is weather.ini, any parameter can be overwritten on the command line"
     )
 
@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--config')
 parser.add_argument('--station')
 parser.add_argument('--period')
-parser.add_argument('--db')
+parser.add_argument('--database')
 parser.add_argument('--host')
 parser.add_argument('--user')
 parser.add_argument('--password')
@@ -30,7 +30,7 @@ if args.config:
     config_file = args.config
 config = configparser.ConfigParser()
 config.read(config_file)
-db = config['MySQL']['db']
+db = config['MySQL']['database']
 host = config['MySQL']['host']
 user = config['MySQL']['user']
 password = config['MySQL']['password']
@@ -49,8 +49,8 @@ if not period:
 if period not in ["latest-hour", "latest-day", "latest-months"]:
     period = "latest-day"
 
-if args.db:
-    db = args.db
+if args.database:
+    db = args.database
 if args.host:
     host = args.host
 if not host:
