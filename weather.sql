@@ -1,4 +1,4 @@
-CREATE TABLE `weather` (
+CREATE TABLE IF NOT EXISTS `weather` (
   `observation_id` int NOT NULL AUTO_INCREMENT,
   `date` date DEFAULT NULL,
   `time` time DEFAULT NULL,
@@ -6,12 +6,13 @@ CREATE TABLE `weather` (
   `rel_hum` decimal(10,0) DEFAULT NULL,
   `temp` float DEFAULT NULL,
   `windspeed` float DEFAULT NULL,
+  `station` int DEFAULT NULL,
   `winddir` int DEFAULT NULL,
   PRIMARY KEY (`observation_id`),
-  UNIQUE KEY `date_time_idx` (`date`,`time`)
+  UNIQUE KEY `date_time_idx` (`date`,`time`,`station`)
 )
 
-CREATE TABLE `aggregated_weather` (
+CREATE TABLE IF NOT EXISTS `aggregated_weather` (
   `Date_id` int NOT NULL AUTO_INCREMENT,
   `Date` date DEFAULT NULL,
   `T_max` float DEFAULT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE `aggregated_weather` (
   `RH_mean` float DEFAULT NULL,
   `Rainfall` float DEFAULT NULL,
   `ETo` float DEFAULT NULL,
+  `station` int DEFAULT NULL,
   PRIMARY KEY (`Date_id`),
-  UNIQUE KEY `date_idx` (`Date`)
+  UNIQUE KEY `date_idx` (`Date`,`station`)
 )
