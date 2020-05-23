@@ -22,7 +22,7 @@ mysql weather < /opt/weather/weather.sql
 ````
 Configure and run:
 ````
-vim weather.ini
-./getweather.py
-./aggregateweather.py
+vim /opt/weather/weather.ini
+/opt/weather/getweather.py
+/opt/weather/aggregateweather.py
 ````
