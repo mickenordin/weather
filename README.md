@@ -30,3 +30,11 @@ vim /opt/weather/weather.ini
 /opt/weather/getweather.py
 /opt/weather/aggregateweather.py
 ````
+Example crontab entry for weather user:
+````
+# m h  dom mon dow   command
+15 * * * * /opt/weather/getweather.py
+30 * * * * /opt/weather/getweather.py --station 97280
+45 2,14 * * * /opt/weather/aggregateweather.py
+45 3,15 * * * /opt/weather/aggregateweather.py --station 97280
+````
