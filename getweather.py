@@ -73,8 +73,8 @@ mydb = mysql.connector.connect(auth_plugin='mysql_native_password',
 cursor = mydb.cursor()
 
 upsert = ("REPLACE INTO weather "
-          "(date, time, rainfall, rel_hum, temp, winddir, windspeed, station) "
-          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+          "(date, time, rainfall, rel_hum, temp, winddir, windspeed, station, station_name) "
+          "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
 # Metrics mapping
 rainfall = "7"
 rel_hum = "6"
@@ -88,6 +88,7 @@ for metric in [rainfall, rel_hum, temp, winddir, windspeed]:
         'https://opendata-download-metobs.smhi.se/api/version/1.0/parameter/{}/station/{}/period/{}/data.json'
         .format(metric, station, period))
 
+station_name = results[rainfall].json()['station']['name']
 rainfall_arr = sorted(results[rainfall].json()['value'],
                       key=lambda i: i['date'])
 rel_hum_arr = sorted(results[rel_hum].json()['value'], key=lambda i: i['date'])
@@ -106,7 +107,7 @@ for k in rainfall_arr:
     widi = winddir_arr[i]['value']
     wisp = windspeed_arr[i]['value']
 
-    data = (date, time, rain, hum, te, widi, wisp, station)
+    data = (date, time, rain, hum, te, widi, wisp, station, station_name)
     cursor.execute(upsert, data)
     i = i + 1
 

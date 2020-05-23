@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `weather` (
   `temp` float DEFAULT NULL,
   `windspeed` float DEFAULT NULL,
   `station` int DEFAULT NULL,
+  `station_name` varchar(255) DEFAULT NULL,
   `winddir` int DEFAULT NULL,
   PRIMARY KEY (`observation_id`),
   UNIQUE KEY `date_time_idx` (`date`,`time`,`station`)
@@ -24,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `aggregated_weather` (
   `Rainfall` float DEFAULT NULL,
   `ETo` float DEFAULT NULL,
   `station` int DEFAULT NULL,
+  `station_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Date_id`),
   UNIQUE KEY `date_idx` (`Date`,`station`)
 );

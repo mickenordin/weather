@@ -87,7 +87,7 @@ mydb = mysql.connector.connect(auth_plugin='mysql_native_password',
 cursor = mydb.cursor()
 
 date_select = ("SELECT DISTINCT `date` " "FROM weather ")
-
+s_name = ""
 cursor.execute(date_select)
 dates = cursor.fetchall()
 csv = "date,T_max,T_min,T_mean,RH_max,RH_min,RH_mean,Rainfall\n"
@@ -118,6 +118,7 @@ for i in dates:
         #| temp           | float         | YES  |     | NULL    |                |
         #| windspeed      | float         | YES  |     | NULL    |                |
         #| station        | int           | YES  |     | NULL    |                |
+        #| station_name   | varchar(255)  | YES  |     | NULL    |                |
         #| winddir        | int           | YES  |     | NULL    |                |
         #+----------------+---------------+------+-----+---------+----------------+
 
@@ -129,10 +130,12 @@ for i in dates:
         temp = 5
         #windspeed = 6
         #station = 7
-        #winddir = 8
+        station_name = 8
+        #winddir = 9
         sum_rain += j[rainfall]
         sum_temp += j[temp]
         sum_rel_hum += j[rel_hum]
+        s_name = j[station_name]
         if T_max < j[temp]:
             T_max = j[temp]
         if T_min > j[temp]:
@@ -158,8 +161,8 @@ eto1 = et1.eto_hargreaves()
 
 upsert = (
     "REPLACE INTO aggregated_weather "
-    "(Date, T_max, T_min, T_mean, RH_max, RH_min, RH_mean, Rainfall, ETo, station) "
-    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+    "(Date, T_max, T_min, T_mean, RH_max, RH_min, RH_mean, Rainfall, ETo, station, station_name) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
 for key, value in eto1.items():
     aggdate = key.strftime('%Y-%m-%d')
@@ -169,7 +172,7 @@ for key, value in eto1.items():
             float(tsdata.loc[aggdate,
                              'RH_max']), float(tsdata.loc[aggdate, 'RH_min']),
             float(tsdata.loc[aggdate, 'RH_mean']),
-            float(tsdata.loc[aggdate, 'Rainfall']), float(value), int(station))
+            float(tsdata.loc[aggdate, 'Rainfall']), float(value), int(station), s_name)
     cursor.execute(upsert, data)
 
 mydb.commit()
