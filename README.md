@@ -18,7 +18,7 @@ Create mysql database:
 mysql -e "CREATE DATABASE weather"
 mysql -e "CREATE USER 'weather'@'localhost' IDENTIFIED BY 'password'"
 mysql -e "GRANT ALL PRIVILEGES ON weather.* TO 'weather'@'localhost'"
-mysql weather < weather.sql
+mysql weather < /opt/weather/weather.sql
 ````
 Configure and run:
 ````
