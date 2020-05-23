@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `weather` (
   `winddir` int DEFAULT NULL,
   PRIMARY KEY (`observation_id`),
   UNIQUE KEY `date_time_idx` (`date`,`time`,`station`)
-)
+);
 
 CREATE TABLE IF NOT EXISTS `aggregated_weather` (
   `Date_id` int NOT NULL AUTO_INCREMENT,
@@ -26,4 +26,4 @@ CREATE TABLE IF NOT EXISTS `aggregated_weather` (
   `station` int DEFAULT NULL,
   PRIMARY KEY (`Date_id`),
   UNIQUE KEY `date_idx` (`Date`,`station`)
-)
+);
