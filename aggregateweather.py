@@ -86,7 +86,7 @@ mydb = mysql.connector.connect(auth_plugin='mysql_native_password',
 
 cursor = mydb.cursor()
 
-date_select = ("SELECT DISTINCT `date` " "FROM weather ")
+date_select = ("SELECT DISTINCT `date` FROM weather WHERE station = {}".format(station))
 s_name = ""
 cursor.execute(date_select)
 dates = cursor.fetchall()
