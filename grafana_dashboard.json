@@ -16,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1590249347291,
+  "iteration": 1590414938713,
   "links": [],
   "panels": [
     {
@@ -251,6 +251,7 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Current wind direction",
+      "transparent": true,
       "type": "gauge"
     },
     {
@@ -285,11 +286,11 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 6,
+        "x": 0,
         "y": 8
       },
       "hiddenSeries": false,
-      "id": 11,
+      "id": 12,
       "interval": "1h",
       "legend": {
         "avg": false,
@@ -348,6 +349,167 @@
       "timeRegions": [],
       "timeShift": null,
       "title": "Rainfall",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "lengthmm",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "ETo": "dark-orange",
+        "Rainfall": "dark-blue"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "lengthmm"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 11,
+      "interval": "1h",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pluginVersion": "7.0.0",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "with data as (\n  select\n    date as time,\n    rainfall\n  from aggregated_weather where $__timeFilter(date) and station_name = \"$Station\"\n  group by time\n) select time, sum(rainfall) over (order by time) as Rainfall from data;\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "with data as (\n  select\n    date as time,\n    ETo\n  from aggregated_weather where $__timeFilter(date) and station_name = \"$Station\"\n  group by time\n) select time, sum(ETo) over (order by time) as ETo from data;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Cumulative rainfall and evapotranspiration",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -491,7 +653,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Rainfall vs Evapotranspiration",
+      "title": "Daily rainfall vs Evapotranspiration",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -880,7 +1042,7 @@
     ]
   },
   "time": {
-    "from": "now/y",
+    "from": "now-6M",
     "to": "now"
   },
   "timepicker": {
@@ -899,5 +1061,5 @@
   "timezone": "",
   "title": "Weather",
   "uid": "jMywAWkGz",
-  "version": 21
+  "version": 23
 }
